@@ -1,25 +1,25 @@
 ---
 sectionid: lab1-cicd
 sectionclass: h2
-title: Continuous Deployment
+title: 持续部署
 parent-id: lab-1
 ---
 
-Azure Container Apps allows you to use GitHub Actions to publish revisions to your container app. As commits are pushed to your GitHub repository, a GitHub Action is triggered which updates the container image in the container registry. Once the container is updated in the registry, Azure Container Apps creates a new revision based on the updated container image.
+Azure 容器应用允许你使用 GitHub Actions 将修订发布到容器应用。当提交推送到 GitHub 存储库时，将触发 GitHub Action，该操作会更新容器注册表中的容器映像。在注册表中更新容器后，Azure 容器应用会根据更新的容器映像创建新修订版本。
 
-The GitHub action is triggered by commits to a specific branch in your repository. When creating the integration link, you decide which branch triggers the action.
+GitHub action 由提交到存储库中的特定分支触发。创建集成链接时，您可以决定哪个分支触发Action。
 
 ![Github Action](/media/lab1/githubactionflow.png)
 
-## Setup your Github repository
+## 设置您的 Github 存储库
 
-In order to be able to setup your continuous deployment you'll need a github account and a newly created repository. We made a public repository where you'll find the sources of the [Hello World container](https://github.com/mavilleg/azurecontainerapps-helloworld). [Fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo) and then clone this repository within your own environment.
+为了能够设置持续部署，您需要一个 github 帐户和新创建的存储库。我们创建了一个公共存储库，您可以在其中找到 [Hello World container](https://github.com/mavilleg/azurecontainerapps-helloworld). [Fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo) 并克隆此存储库.
 
-Now that you have the source code you will be able to modify it and rebuild a container that will be pushed onto Azure Container Apps.
+现在，你已拥有源代码，可以对其进行修改并重新生成将推送到 Azure 容器应用的容器。
 
-## Attach Github Actions to your container App
+## 将 Github Action 附加到容器应用
 
-Now that you have a Repo to attach to your environment, you'll have to setup the correct rights on Azure to configure the continous deployment. When attaching a GitHub repository to your container apps, you need to provide a service principal context with the contributor role. The parameter that we will need to configure within the container app are the service principal's `tenantId`, `cliendId`, and `clientSecret`.
+现在，你已拥有要附加到环境的存储库，必须在 Azure 上设置正确的权限才能配置连续部署。将 GitHub 存储库附加到容器应用时，需要提供具有参与者角色的服务主体上下文。我们需要在容器应用中配置的参数是服务主体的 `tenantId`, `cliendId`, 和 `clientSecret`.
 
 {% collapsible %}
 
@@ -31,16 +31,17 @@ az ad sp create-for-rbac \
   --sdk-auth
   ```
 
-  The return value from this command is a JSON payload, which includes the service principal's `tenantId`, `cliendId`, and `clientSecret`.
+  此命令的返回值是 JSON 有效负载，其中包括服务主体的 `tenantId`, `cliendId`, 和 `clientSecret`.
+
   {% endcollapsible %}
 
-Once those values retrieve you will have to [create an Azure container registry](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-get-started-portal#:~:text=%20Quickstart%3A%20Create%20an%20Azure%20container%20registry%20using,must%20log%20in%20to%20the%20registry...%20More%20) being able to host the newly created containers.
+检索这些值后，必须 [创建一个能够托管新创建的容器的 Azure 容器注册表](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-get-started-portal#:~:text=%20Quickstart%3A%20Create%20an%20Azure%20container%20registry%20using,must%20log%20in%20to%20the%20registry...%20More%20)  
 
-> This registry has to have the *Admin User* enabled, or the integration with ACA won't work.
+> 此注册表必须启用*Admin User* ，否则与 ACA 的集成将不起作用。
 
 {% collapsible %}
 
-Open your registry and under the `Access keys` panel, click on `Enabled` to enable the user admin. Or use:
+打开注册表，然后在 `Access keys`面板下，单击以`Enabled`启用用户管理员。或使用:
 
 ``` bash
 az acr update -n <acrName> --admin-enabled true
@@ -48,15 +49,16 @@ az acr update -n <acrName> --admin-enabled true
 
 {% endcollapsible %}
 
-Once configured, you can move forward by attaching your GitHub repo to the revision.
+配置完成后，可以通过将 GitHub 存储库附加到修订版来继续操作。
 
 ![Github Action](/media/lab1/githubattach.png)
 
-Once everything is in place you can see that a new folder `.github/workflows` has been added to your project. It hosts a YAML file that will allow the triggering of an automatic GitHub Action that will deploy any changes pushed onto the branch. It will also automatically setup some secrets on your application to store the admin's login to reach out to the Container Registry. We will see later in this lab how to manage those secrets.
+一切就绪后，您可以看到一个新文件夹`.github/workflows` 已添加到项目中。它托管一个 YAML 文件，该文件将允许触发自动 GitHub 操作，该操作将部署推送到分支上的任何更改。它还会自动在您的应用程序上设置一些机密，以存储管理员的登录名以联系容器注册表。我们将在本练习的后面部分了解如何管理这些机密。
+
 
 ![Secret ACR](/media/lab1/secretacr.png)
 
-The `az containerapp github-action show` command returns the GitHub Actions configuration settings for a container app. It returns a JSON payload with the GitHub Actions integration configuration settings.
+该命令`az containerapp github-action show`返回容器应用的 GitHub 操作配置设置。它返回一个包含 GitHub Action 集成配置设置的 JSON 有效负载。
 
 {% collapsible %}
 
@@ -68,33 +70,32 @@ az containerapp github-action show \
 
 {% endcollapsible %}
 
-Let's test that out!
+让我们来测试一下！
 
-## Putting everything together
+## 将所有内容放在一起
 
-Open your project within VS Code (or your favorite IDE). You should see that the `.github/workflows` has been added. If it's not the case, synchronize the change that has been made onto the project (git pull request).
+在 VS Code（或您喜欢的 IDE）中打开项目。您应该看到已添加 `.github/workflows`。如果不是这种情况，请将所做的更改同步到项目上（git 拉取请求）。
+现在，您可以修改我们从一开始就使用的 Hello World 容器的源代码。例如，您可以更改`index.html`文件下徽标上方的文本。
 
-Now you can modify the source code of the Hello World container that we are using since the beginning. For example, you could change the text above the logo under the `index.html` file.
-
-Once the change are commited you can go to your GitHub repos to see the GitHub Action occurring:
+提交更改后，您可以转到 GitHub 存储库以查看正在发生的 GitHub Action： 
 
 ![Github Action process](/media/lab1/action.png)
 
-As you can see, pushing the changes (commit) automatically triggered a GitHub Action workflow that built and deployed our new container into our registry and then on our container apps under a new revision. You can validate it by going under the revision management panel and see your newly provisioned revision.
+如您所见，推送更改（提交）会自动触发 GitHub Action工作流，该工作流将构建新容器并部署到注册表中，然后在新版本下部署到容器应用上。您可以通过转到修订管理面板下并查看新置备的修订来验证它。 
 
 ![Github Action process](/media/lab1/revisionaction.png)
 
-As you can see the revision is not loadbalanced yet, meaning that none of the traffic is routed to it. Supporting multiple revisions in Azure Container Apps allows you to manage the versioning and amount of traffic sent to each revision.
+如您所见，修订版尚未进行负载平衡，这意味着没有流量路由到它。通过在 Azure 容器应用中支持多个修订，可以管理发送到每个修订版本的版本控制和流量。
 
-Once a part (or all) of the traffic is sent to your app, you can test that the newly version of your application is running correctly.
+将部分（或全部）流量发送到应用后，可以测试应用程序的新版本是否正常运行。
 
 ![Github Action process](/media/lab1/actionval.png)
 
-All of this can be configured as needed. Indeed, you can change whether or not your container app supports multiple active revisions. The `activeRevisionsMode` property accepting two values:
+所有这些都可以根据需要进行配置。实际上，你可以更改容器应用是否支持多个活动修订。`activeRevisionsMode`接受两个值的属性：
 
-- multiple: Configures the container app to allow more than one active revision.
-- single: Automatically deactivates all other revisions when a revision is activated.
+- multiple: 将容器应用配置为允许多个活动修订。
+- single: 激活修订版时自动停用所有其他修订版。
 
-Enabling single mode makes it so that when you create a revision-scope change and a new revision is created, any other revisions are automatically deactivated.
+启用single模式后，当您创建修订范围更改并创建新修订时，将自动停用任何其他修订。
 
-You could also manage the different aspects of a revision using the [`az containerapp revision`](https://docs.microsoft.com/en-us/azure/container-apps/revisions-manage?tabs=bash#list) command.
+还可以使用 [`az containerapp revision`] 命令管理修订的不同方面 (https://docs.microsoft.com/en-us/azure/container-apps/revisions-manage?tabs=bash#list) .

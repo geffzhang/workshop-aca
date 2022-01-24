@@ -1,46 +1,45 @@
 ---
 sectionid: lab2-rotation
 sectionclass: h2
-title: Secret Rotation
+title: 机密轮换
 parent-id: lab-2
 ---
 
-One of the main concerns of the management of the lifecycle of an application is its secret/certificate management. Indeed, once in while you'll have to make rotation on your key/secret/certificate for security reason (leak or just good pratice). Let's see how secrets management in done with Azure Container Apps.
+管理应用程序生命周期的主要关注点之一是其机密/证书管理。事实上，出于安全原因（泄漏或只是良好的操作），您将不得不在密钥/秘密/证书上进行轮换。让我们看看如何使用 Azure 容器应用完成机密管理。
 
-### Manage your secret
+### 管理你的机密
 
-In the deployed Reddog application, the container `receipt-generation-service` has two secrets to connect itself to a service bus sending receipts that he is posting onto a storage account.
+在已部署的 Reddog 应用程序 `receipt-generation-service`中，容器有两个机密，用于将自身连接到服务总线，发送他要发布到存储帐户的凭据。 
 
  ![The receipt secret](/media/lab2/rotation/secretrotation.png)
 
-Every second, it receives a receipt which is then saved into the blob storage account `receipts`. We will simulate a rotation of the storage account access key.
+每秒它都会收到一封凭据，然后将其保存到 Blob 存储帐户`receipts`中。我们将模拟存储帐户访问密钥的轮换。
 
-To do so, go to the storage account in order to make the rotation of both primary and secondary keys.
+为此，请转到存储帐户，以便轮换主密钥和辅助密钥。
 
 {% collapsible %}
 
-Go to the storage account under the `Access key` blade in and click the `Rotate keys` button.
+转到边栏`Access key` 选项卡下的存储帐户，然后单击 `Rotate keys`按钮。 
 
 ![Rotation Key](/media/lab2/rotation/sarot.png)
 
 {% endcollapsible %}
 
-Once done you'll see that the blob storage is no longer receiving any receipts from our application. You can validate easily this by deleting the "Receipts" blob container and recreate it after few seconds (Azure may display an error message, just retry after few seconds). The blob container should remain empty because the application does not have the rights any more to write new receipts.
+完成后，你将看到 Blob 存储不再从我们的应用程序接收任何收据。可以通过删除"Receipts"blob 容器并在几秒钟后重新创建它来轻松验证这一点（Azure 可能会显示一条错误消息，只需在几秒钟后重试）。Blob 容器应保持为空，因为应用程序不再具有写入新收据的权限。
 
-#### Fetch the new secret
+#### 获取新密钥
 
-In order to set back the connection between the storage account and the `receipt-generation-service` you'll have to retrieve the new key and edit the value of the key `blob-storage-key`.
+为了设置存储帐户与 `receipt-generation-service`  存储帐户之间的连接，必须检索新密钥并编辑密钥`blob-storage-key`的值。
 
 {% collapsible %}
 
-On the storage account under the `Access key` blade copy the key value.
-Then go to the `Secrets` blade of the container app panel in order to edit the old value of the key by the newly copied one.
+在边栏选项卡 `Access key`下的存储帐户上，复制密钥值。然后转到容器应用面板的边栏选项`Secrets`卡，以便按新复制的密钥编辑密钥的旧值。
 
 ![Rotation Key](/media/lab2/rotation/sarot3.png)
 
 {% endcollapsible %}
 
-> Note that this change is an application-scope change that won't recreate a revision. Having said that, the revision has to be restarted in order to propagate the new value of the key. This should be automatically done by saving the changes made to the key. However, if it's not the case you'll have to restart the revision using the CLI.
+> 请注意，此更改是应用程序范围的更改，不会重新创建修订版本。话虽如此，必须重新启动修订才能传播密钥的新值。这应该通过保存对密钥所做的更改来自动完成。但是，如果不是这种情况，则必须使用 CLI 重新启动修订版。 
 
 {% collapsible %}
 
@@ -53,4 +52,4 @@ az containerapp revision restart \
 
 {% endcollapsible %}
 
-Now, if you get back to the `receipts` blob you should see all the receipts being received again. Note that you'll also see the receipt that occured during the rotation time because of the retention period of the service bus. This demonstrate also how a well developed application is essential to its resiliency and its fault tolerance.
+现在，如果返回到`receipts` Blob，则应再次看到收到的所有收据。请注意，由于服务总线的保留期，你还将看到在轮换期间发生的回执。这也演示了一个开发良好的应用程序对于其复原能力和容错能力至关重要。

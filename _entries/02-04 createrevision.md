@@ -1,52 +1,52 @@
 ---
 sectionid: lab1-revision
 sectionclass: h2
-title: Create a revision
+title: 创建修订版本
 parent-id: lab-1
 ---
 
-A revision is an immutable snapshot of a container app. The first revision is automatically created when you deploy your container app. New revisions will be automatically created when a container app's template configuration changes. Indeed, while revisions are immutable, they are affected by changes to global configuration values, which apply to all revisions.
+修订版是容器应用的不可变快照。第一个修订版是在部署容器应用时自动创建的。当容器应用的模板配置发生更改时，将自动创建新修订版本。实际上，虽然修订是不可变的，但它们会受到全局配置值更改的影响，这些更改适用于所有修订版本。
 
-Revisions are most useful when you enable ingress to make your container app accessible via HTTP. Revisions are often used when you want to direct traffic from one snapshot of your container app to the next. Typical traffic direction strategies include A/B testing and BlueGreen deployment.
+当您启用入口以使容器应用可通过 HTTP 访问时，修订最有用。当你想要将流量从容器应用的一个快照定向到下一个快照时，通常会使用修订。典型的流量方向策略包括A / B测试和BlueGreen部署。
 
-The following diagram shows a container app with two revisions.
+下图显示了具有两个修订版本的容器应用。
 
 ![Revision App](/media/lab1/revisionpond.png)
 
-> Note that changes made to a container app fall under one of two categories: revision-scope and application-scope changes:
+> 请注意，对容器应用所做的更改属于以下两类之一：修订范围更改和应用程序范围更改：
 
-- Revision-scope changes are any change that triggers a new revision (e.g: changes to containers, add or update scaling rules, changes to Dapr settings, etc.)
-- Application-scope changes don't create revisions (e.g: changes to traffic splitting rules, turning ingress on or off, changes to secret values, etc.)
+- 修订范围更改是触发新修订的任何更改（例如：对容器的更改、添加或更新缩放规则、对 Dapr 设置的更改等）
+- 应用程序范围的更改不会创建修订（例如：更改流量拆分规则、打开或关闭入口、更改机密值等）
 
-### Create your first revision
+### 创建您的第一个修订版
 
-> Do not use any suffixes on your revisions as it may provoke some [internal issue](https://github.com/microsoft/azure-container-apps/issues/37). 
+> 不要在修订中使用任何后缀，因为它可能会引起一些 [内部问题](https://github.com/microsoft/azure-container-apps/issues/37). 
 
-Let's create and deploy a new version of the Hello World application with a different layout. To do so, you will have to deploy a new container within our application, meaning that we're doing a revision-scope change. This new version of our application can be found on docker hub `mavilleg/acarevision-helloworld:acarevision-hellowold`.
+让我们创建并部署具有不同布局的 Hello World 应用程序的新版本。为此，您必须在应用程序中部署一个新容器，这意味着我们正在执行修订范围的更改。 我们应用程序的这个新版本可以在 docker hub 上找到 `mavilleg/acarevision-helloworld:acarevision-hellowold`.
 
-Once this new revision is provisionned we will configure an even split of the traffic between the two revisions applied by assigning percentage values. You can decide how to balance traffic among different revisions. Traffic splitting rules are assigned by setting weights to different revisions.
+预配此新版本后，我们将通过分配百分比值来配置两个修订版之间的流量平均分配。您可以决定如何在不同修订版之间平衡流量。流量拆分规则是通过为不同的修订版本设置权重来分配的。
 
 {% collapsible %}
-Go to the revisions management blade on the left inside of the apps panel.
-Click on `Create a new revision`
+转到应用面板左侧的修订管理边栏选项卡.
+点击 `创建一个新的修订版`
 
 ![Revision soluce](/media/lab1/addrevision.png)
 
-You can then decide to either edit the existing container image definition or add a new one (but then, don't forget to delete the existing one or your deployment may fail!). Click on `Add` in order to pull the new image that will be used to create the new revision.
+然后，可以决定编辑现有容器映像定义或添加新的容器映像定义（但不要忘记删除现有容器映像定义，否则部署可能会失败！单击 `Add` 以提取将用于创建新修订版本的新图像。
 
 ![Revision soluce](/media/lab1/addrevision1.png)
   
 {% endcollapsible %}
 
-Once your new revision is provisioned, you can split the traffic between them using the revision management panel within the Azure portal. Hitting the endpoint will result serving one of the revision depending on the chosen ponderation (in %).
+预配新修订版后，可以使用 Azure 门户中的修订管理面板在它们之间拆分流量。命中终结点将导致根据所选的思考（以 % 为单位）提供其中一个修订。 
 
-> Note that new revisions remain active until you deactivate them, or you set your container app to automatically deactivate old revisions.
+> 请注意，新修订将保持活动状态，直到你停用它们，或者将容器应用设置为自动停用旧修订版本。
 
-- Inactive revisions remain as a snapshot record of your container app in a certain state.
-- You are not charged for inactive revisions.
-- Up to 100 revisions remain available before being purged.
+- 非活动修订将保留为容器应用的快照记录，处于特定状态
+- 您无需为非活动修订付费.
+- 在清除之前，最多有 100 个修订版可用.
 
-You can see all revision using the `az containerapp revision list`and have more detail on a specific one using the `az containerapp revision show` command.
+你可以用命令 `az containerapp revision list` 该命令查看所有修订版，并用命令 `az containerapp revision show`获取有关特定修订版的更多详细信息。  
 
 {% collapsible %}
 
@@ -66,4 +66,4 @@ az containerapp revision show \
 
 {% endcollapsible %}
 
-That's how you can configure revision to be able to have A/B testing scenario or blue-green deployment scenario.  
+这就是配置修订以便能够具有 A/B 测试方案或蓝绿色部署方案的方法。  

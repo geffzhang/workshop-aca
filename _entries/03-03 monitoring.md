@@ -1,47 +1,47 @@
 ---
 sectionid: lab2-monitoring
 sectionclass: h2
-title: Monitor the platform
+title: 监控平台
 parent-id: lab-2
 ---
 
-#### Observability
+#### 可观察性
 
-Observability is critical for any application. To ensure that everything is fine but also to detect/anticipate any issue on the platform, you should be able to have a 360° view.
+可观察性对于任何应用程序都至关重要。为了确保一切正常，还要检测/预测平台上的任何问题，您应该能够获得360°视图。
 
-#### Testing the app
+#### 测试应用
 
-We already know that components have been deployed successfully but are they fully working? To check the platform, several visual tests can be done. Start by opening the Reddog frontend `UI` portal in a browser.
+我们已经知道组件已成功部署，但它们是否完全正常工作？要检查平台，可以进行几次视觉测试。首先在浏览器中打开 Reddog 前端`UI`门户。
 
 {% collapsible %}
 
-Remember the architecture schema of the Reddog platform. The frontend is the `UI` Container App which is exposed **internally** and thus not reachable outside the (managed) kubernetes cluster. In front of the `UI` is the `Traeffik` ingress controller which is the `Reddog` Container App, exposed publically (Internet).
+请记住Reddog平台的架构。前端 `UI`是容器应用，它在内部**internally**，因此无法在（托管）kubernetes 集群外部访问。 `UI`前面是`Traeffik`入口控制器，它是`Reddog`容器应用程序，公开（互联网）。
 
-To find the URL of the portal, in the Azure Container App environment, open the `Reddog` Container App. In the overview tab, you should find the generated FQDN URL.
+若要查找门户的 URL，请在 Azure 容器应用环境中，打开`Reddog`容器应用。在"概述"选项卡中，应找到生成的 FQDN URL。
 
 ![Finding the endpoint](/media/lab2/monitor/finding-endpoint.png)
 
-Copy the URL in any browser to discover a nice dynamic dashboard :
+复制URL到任何浏览器中打开 发现一个不错的动态仪表板:
 
 ![Running application](/media/lab2/monitor/running-app.png)
 
-> Did you notice the delay for the page to be displayed the first time? It is caused by the fact that the running containers are removed when the platform is not used. You are going to see that in detail further in this workshop.
+> 您是否注意到页面首次显示的延迟？这是由于在不使用平台时删除了正在运行的容器。您将在本研讨会中进一步详细了解这一点。 
 
 {% endcollapsible %}
 
-##### Get Logs
+##### 获取日志
 
-Metrics are important, but it is also important to be able to get the logs of the application to be able to debug or understand any misbehavior.
+指标很重要，但能够获取应用程序的日志以便能够调试或理解任何不当行为也很重要。
 
-In Azure Container Apps, logging agents are capable of capturing all *stdout/stderror* messages sent by containers. The messages are then pushed to Azure Log Analytics, allowing you to have in one place, without any specific tooling, all logging in one place.
+在 Azure 容器应用中，日志记录代理能够捕获容器发送的所有*stdout/stderror*消息。然后，这些消息将推送到 Azure 日志分析，允许你在一个位置（无需任何特定工具）将所有日志记录放在一个位置。
 
-Try to retrieve the logs on the `UI` container. You can do it using command-line or through the portal
+尝试检索`UI`容器上的日志。可以使用命令行或通过门户执行此操作
 
 {% collapsible %}
 
-On the Azure Portal, open Logs Analytics. You can use the left part of the screen to see the tables and columns and build a query using Kusto language.
+在 Azure 门户上，打开"日志分析"。您可以使用屏幕的左侧部分查看表和列，并使用 Kusto 语言构建查询。
 
-The query to get the logs of the `UI` container is :
+获取 `UI` 容器日志的查询是 :
 
 ``` bash
 ContainerAppConsoleLogs_CL 
@@ -50,7 +50,7 @@ ContainerAppConsoleLogs_CL
 
 ![Get Logs using CLI](/media/lab2/monitor/logs-ui.png)
 
-The second way of doing it is to use the command line and the Azure CLI. (it may ask you to install a CLI extension first).
+第二种方法是使用命令行和 Azure CLI. (它可能会要求您先安装 CLI 扩展).
 
 ``` bash
 az monitor log-analytics query \
@@ -59,56 +59,56 @@ az monitor log-analytics query \
   --out table
 ```
 
-Here, the query is more complex to select the columns to display and the number of lines we want to return.
+在这里，选择要显示的列和要返回的行数的查询更为复杂
 
 ![Get Logs using CLI](/media/lab2/monitor/logs-cli.png)
 
 {% endcollapsible %}
 
-That's it. No need to install specific monitoring tool (i.e. Prometheus) nor need to connect interactively to your container to retrieve its logs.
+无需安装特定的监控工具（即Prometheus），也无需以交互方式连接到容器以检索其日志。
 
-##### Get Metrics
+##### 获取指标
 
-Application Insights, a feature of Azure Monitor, is an extensible Application Performance Management (APM) service for developers and DevOps professionals. Use it to monitor your live applications. It will automatically detect performance anomalies, and includes powerful analytics tools to help you diagnose issues and to understand what users actually do with your app.
+Application Insights 是 Azure Monitor 的一项功能，是面向开发人员和 DevOps 专业人员的可扩展应用程序性能管理 （APM） 服务。使用它来监视您的实时应用程序。它将自动检测性能异常，并包括功能强大的分析工具，可帮助你诊断问题并了解用户实际对你的应用执行了哪些操作。 
 
-Lucky for us, Application Insights has been automatically deployed and uses the metrics/logs stored automatically in Log Analytics by Azure Container Apps. As you can see, if you dig a little big, Application Insights can help to see metrics, errors, users flow, and so much more.
+幸运的是，Application Insights 已自动部署，并使用 Azure 容器应用自动存储在日志分析中的metrics/logs 。如您所见，如果您挖掘深入一点，Application Insights 可以帮助查看指标、错误、用户流等等。
 
-Start by opening Application Insights and watch the main metrics of the platform.
+首先打开Application Insights并观察平台的主要指标
 
 {% collapsible %}
 
-In the resource group, look for the Application Insights resource. Once you open it, you can see main metrics such as failures (should be empty), the average response time and the requests per second.
+在资源组中，查找"Application Insights"资源。打开它后，您可以看到主要指标，例如失败（应为空），平均响应时间和每秒请求数。 
 
 ![Overview metrics](/media/lab2/monitor/overview-metrics.png)
 
-If you click on one chart (i.e. response time), you'd be brought to performance tab where you can see specific metrics for each micro-service.
+如果您单击一个图表（即响应时间），您将进入"性能"选项卡，您可以在其中查看每个微服务的特定指标。
 
 ![Detailed performance](/media/lab2/monitor/performance.png)
 
 {% endcollapsible %}
 
-Another way to get the health of your platform is to use the "magic map" feature of Application Insights to get an overview of the whole platform. Find and analyze the application's map.
+了解平台运行状况的另一种方法是使用 Application Insights 的"魔术地图"功能来概览整个平台。查找并分析应用程序的映射。
 
 {% collapsible %}
 
-On the left part, open the `Application Map` menu. From the logs only, it is capable of drawing a map of your microservices platform, showing interactions between components, average performance and even failure rates when an error occurs.
+在左侧，打开菜单`Application Map` 。仅从日志中，它能够绘制微服务平台的映射，显示组件之间的交互，平均性能，甚至发生错误时的故障率。 
 
 ![App Insights - application map](/media/lab2/monitor/logs-app-insights-maps.png)
 
 {% endcollapsible %}
 
-Use the map to quickly get the logs of a specific micro-service, for instance, the receipts generator service:
+使用映射快速获取特定微服务的日志，例如收据生成器服务：
 
 {% collapsible %}
 
-On the map, click on one micro-services, then in the side panel which opens, click on `View logs`.
+在地图上，单击一个微服务，然后在打开的侧面板中单击 `View logs`.
 
 ![App Insights - get logs](/media/lab2/monitor/logs-app-insights-logs-app.png)
 
-It should open Logs analytics and automatically generate for you the query which was used to draw this micro-services on the map.
+它应该打开日志分析并自动为您生成用于在地图上绘制此微服务的查询。
 
 ![Display specific logs](/media/lab2/monitor/service-logs.png)
 
 {% endcollapsible %}
 
-It's just the overview of observability but it shows how well integrated monitoring is within Azure Container Apps.
+它只是可观察性的概述，但它显示了 Azure 容器应用中的集成程度。

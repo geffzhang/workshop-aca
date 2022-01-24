@@ -1,52 +1,53 @@
 ---
 sectionid: discover
 sectionclass: h2
-title: Discover
+title: 概要
 parent-id: intro
 ---
 
-[Azure Containers Apps](https://docs.microsoft.com/en-us/azure/container-apps)is a new serverless container platform for applications that need to scale on demand in response to HTTPS requests, events, or simply run as always-on services or background job processing without managing VMs, orchestrators, or other cloud infrastructure. Azure Container Apps makes it easy to manage your containerized applications with built-in autoscaling, traffic routing, application lifecycle management, and service-to-service communication in a fully managed environment.
+[Azure 容器应用](https://docs.microsoft.com/zh-cn/azure/container-apps)是一个新的无服务器容器平台，适用于需要按需缩放以响应 HTTPS 请求、事件或仅作为始终在线的服务或后台作业处理运行而无需管理虚拟机、业务流程协调程序或其他云基础设施的应用程序。借助 Azure 容器应用，可以在完全托管的环境中通过内置的自动缩放、流量路由、应用程序生命周期管理和服务到服务通信来轻松管理容器化应用程序。
 
-While App Service, Functions, and Logic Apps provide application developers with fully-managed, high-productivity solutions for domain-specific problems, customers have to drop out of the fully-managed world and fall back to Kubernetes for full microservice applications or to run general purpose container applications. Azure container Apps fills this gap and rounds out the Azure application platform by providing high-level APIs for the most common container application scenarios, including auto-scaling, version management, application upgrades, and service-to-service communication in a fully managed environment.
+虽然应用服务、函数和逻辑应用为应用程序开发人员提供了针对特定领域的问题的完全托管、高生产力的解决方案，但客户需要能够从完全托管的服务退出，并回归到 Kubernetes 以获得完整的微服务应用程序或运行常规用途容器应用程序。Azure 容器应用填补了这一空白，并通过为最常见的容器应用程序方案（包括完全托管环境中的自动缩放、版本管理、应用程序升级和服务到服务通信）提供高级 API 来完善 Azure 应用程序平台。
 
-Common uses for Azure Container Apps include:
 
-- Deploying API endpoints
-- Hosting background processing applications
-- Handling event-driven processing
-- Running microservices
+Azure 容器应用的常见用途包括:
 
-Applications built on Azure Container Apps can dynamically scale based on the following characteristics:
+- 部署 API 服务
+- 托管后台处理应用程序
+- 处理 事件驱动的流程
+- 运行微服务
 
-- HTTP traffic
-- Event-driven processing
-- CPU or memory load
-- Any [KEDA-supported scaler](https://keda.sh/docs/2.4/scalers/)
+基于 Azure 容器应用生成的应用程序可以根据以下特征动态缩放:
 
-![Example scenarios for Azure Container Apps](/media/intro/azure-container-apps-example-scenarios.png)
+- HTTP 流量
+- 事件驱动流程
+- CPU 或者 内存负载
+- 任何 [KEDA支持的缩放器](https://keda.sh/docs/2.4/scalers/)
 
-Azure Container Apps enables executing application code packaged in any container and is unopinionated about runtime or programming model. With Container Apps, you enjoy the benefits of running containers while leaving behind the concerns of managing cloud infrastructure and complex container orchestrators.
+![  Azure 容器应用的场景](/media/intro/azure-container-apps-example-scenarios.png)
 
-With Azure Container Apps, you can:
+Azure 容器应用支持运行 打包在任何容器中的应用程序代码，并且没有运行时或编程模型绑定。借助容器应用，你可以享受运行容器的好处，同时无需担心管理云基础设施和复杂的容器业务流程协调程序。
 
-- [**Run multiple container revisions**](https://docs.microsoft.com/en-us/azure/container-apps/application-lifecycle-management) and manage the container app's application lifecycle.
+使用 Azure 容器应用，可以:
 
-- [**Autoscale**](https://docs.microsoft.com/en-us/azure/container-apps/scale-app) your apps based on any KEDA-supported scale trigger. Most applications can scale to zero<sup>1</sup>.
+- [**运行多个容器版本**](https://docs.microsoft.com/zh-cn/azure/container-apps/application-lifecycle-management) 并管理容器应用的应用程序生命周期。
 
-- [**Enable HTTPS ingress**](https://docs.microsoft.com/en-us/azure/container-apps/ingress) without having to manage other Azure infrastructure.
+- 根据任何 KEDA 支持的缩放触发器 [**自动缩放**](https://docs.microsoft.com/zh-cn/azure/container-apps/scale-app) 你的应用程序。大多数应用程序可以弹性到零<sup>1</sup>.
 
-- [**Split traffic**](https://docs.microsoft.com/en-us/azure/container-apps/revisions) across multiple versions of an application for Blue/Green deployments and A/B testing scenarios.
+- [**启用 HTTPS 入口**](https://docs.microsoft.com/zh-cn/azure/container-apps/ingress) 而无需管理其他 Azure 基础设施
 
-- [**Use internal ingress and service discovery**](https://docs.microsoft.com/en-us/azure/container-apps/connect-apps) for secure internal-only endpoints with built-in DNS-based service discovery.
+- [**将流量拆分**](https://docs.microsoft.com/zh-cn/azure/container-apps/revisions) 到应用程序的多个版本之间，以进行蓝/绿部署和 A/B 测试方案。
 
-- [**Build microservices with Dapr**](https://docs.microsoft.com/en-us/azure/container-apps/microservices) and access its rich set of APIs.
+- [**使用内部入口和服务发现**](https://docs.microsoft.com/zh-cn/azure/container-apps/connect-apps) 通过内置的基于 DNS 的服务发现实现仅限内部的安全终端节点.
 
-- [**Run containers from any registry**](https://docs.microsoft.com/en-us/azure/container-apps/containers), public or private, including Docker Hub and Azure Container Registry (ACR).
+- [**使用Dapr 构建微服务**](https://docs.microsoft.com/zh-cn/azure/container-apps/microservices) 并访问其丰富的 API 集
 
-- [**Use the Azure CLI extension or ARM templates**](https://docs.microsoft.com/en-us/azure/container-apps/get-started) to manage your applications.
+- [**访问任何注册表运行容器**](https://docs.microsoft.com/zh-cn/azure/container-apps/containers), 公共或专用的注册表，包括 Docker Hub 和 Azure 容器注册表 （ACR）
 
-- [**Securely manage secrets**](https://docs.microsoft.com/en-us/azure/container-apps/secure-app) directly in your application.
+- [**使用 Azure CLI 扩展或 ARM 模板**](https://docs.microsoft.com/zh-cn/azure/container-apps/get-started) 来管理应用程序。
 
-- [**View application logs**](https://docs.microsoft.com/en-us/azure/container-apps/monitor) using Azure Log Analytics.
+- 直接在应用程序中. [**安全管理机密信息**](https://docs.microsoft.com/zh-cn/azure/container-apps/secure-app) 
 
-<sup>1</sup> Applications that [scale on CPU or memory load](https://docs.microsoft.com/en-us/azure/container-apps/scale-app) can't scale to zero.
+- 使用 Azure 日志分析[**查看应用程序日志**](https://docs.microsoft.com/zh-cn/azure/container-apps/monitor) 
+
+<sup>1</sup> [根据 CPU 或内存负载进行缩放](https://docs.microsoft.com/zh-cn/azure/container-apps/scale-app) 的应用程序无法缩放到零。

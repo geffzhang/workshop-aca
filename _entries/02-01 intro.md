@@ -1,8 +1,7 @@
 ---
 sectionid: lab1-intro
 sectionclass: h2
-title: Context
+title: 上下文
 parent-id: lab-1
 ---
-
-This first lab will guide you to deploy your first *Hello World* app on Containers apps, an application accessible from the Internet.
+第一个实验将指导你在容器应用程序（可从 Internet 访问的应用程序）上部署您的第一个  *Hello World* 应用程序。

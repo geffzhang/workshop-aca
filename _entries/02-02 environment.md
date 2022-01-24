@@ -1,17 +1,17 @@
 ---
 sectionid: create-env
 sectionclass: h2
-title: Create an environment
+title: 创建环境
 parent-id: lab-1
 ---
 
-### Create an environment
+### 创建环境
 
-Before deploying your containerized application, you need a "place" to host your application. In Azure Container Apps, the underlying infrastructure is called an `environment`. An environment creates a secure boundary around a group of container apps. Container Apps deployed in the same environment are deployed in the same virtual network and write logs to the same *Log Analytics* workspace.
+在部署容器化应用程序之前，您需要一个"地方"来托管应用程序。在 Azure 容器应用中，底层基础结构称为 `环境`. 环境围绕一组容器应用创建安全边界。部署在同一环境中的容器应用部署在同一虚拟网络中，并将日志写入同一Log Analytics工作区。
 
-Azure Log Analytics is used to monitor your container app and is required when creating a Container Apps environment.
+Azure 日志分析用于监视容器应用，在创建容器应用环境时需要使用。
 
-Let's start by setting some variables:
+让我们从设置一些变量开始:
 
 ``` bash
 RESOURCE_GROUP="rg-my-container-apps"
@@ -20,28 +20,28 @@ LOG_ANALYTICS_WORKSPACE="my-container-apps-logs"
 CONTAINERAPPS_ENVIRONMENT="my-environment"
 ```
 
-- **RESOURCE_GROUP**: the Azure resource group which will contain your container apps environment
-- **LOCATION**: the Azure region in which will be deployed your apps. During the preview, North US, North Europe, and Canada are the only supported regions
-- **LOG_ANALYTICS_WORKSPACE**: the name of the logs analytics workspace
-- **CONTAINERAPPS_ENVIRONMENT**: the name of the **container apps** environment.
+- **RESOURCE_GROUP**: 将包含容器应用环境的 Azure 资源组
+- **LOCATION**: 将在其中部署应用的 Azure 区域。在预览版中，美国北部、北欧和加拿大是唯一受支持的区域
+- **LOG_ANALYTICS_WORKSPACE**: 日志分析工作区的名称
+- **CONTAINERAPPS_ENVIRONMENT**: **容器应用** 环境的名称.
 
-With these variables defined, you can create a resource group to organize the services related to your new container app.
+定义这些变量后，可以创建资源组来组织与新容器应用相关的服务。
 
 ```  bash
 az group create --name $RESOURCE_GROUP --location "$LOCATION"
 ```
 
-Create a new *Log Analytics workspace* with the following command:
+使用以下命令创建新的 *日志分析工作区* :
 
 ```azurecli
 az monitor log-analytics workspace create --resource-group $RESOURCE_GROUP --workspace-name $LOG_ANALYTICS_WORKSPACE
 ```
 
-Next, retrieve the Log Analytics Client ID and client secret.
+接下来，检索日志分析Client ID 和 client secret。
 
 #### Bash
 
-Make sure to run each query separately to give enough time for the request to complete.
+请确保单独运行每个查询，以便为请求的完成留出足够的时间。
 
 ```bash
 LOG_ANALYTICS_WORKSPACE_CLIENT_ID=`az monitor log-analytics workspace show --query customerId -g $RESOURCE_GROUP -n $LOG_ANALYTICS_WORKSPACE --out tsv`
@@ -53,7 +53,7 @@ LOG_ANALYTICS_WORKSPACE_CLIENT_SECRET=`az monitor log-analytics workspace get-sh
 
 #### PowerShell
 
-Make sure to run each query separately to give enough time for the request to complete.
+请确保单独运行每个查询，以便为请求的完成留出足够的时间。
 
 ```powershell
 $LOG_ANALYTICS_WORKSPACE_CLIENT_ID=(az monitor log-analytics workspace show --query customerId -g $RESOURCE_GROUP -n $LOG_ANALYTICS_WORKSPACE --out tsv)
@@ -63,9 +63,9 @@ $LOG_ANALYTICS_WORKSPACE_CLIENT_ID=(az monitor log-analytics workspace show --qu
 $LOG_ANALYTICS_WORKSPACE_CLIENT_SECRET=(az monitor log-analytics workspace get-shared-keys --query primarySharedKey -g $RESOURCE_GROUP -n $LOG_ANALYTICS_WORKSPACE --out tsv)
 ```
 
-#### Azure Container Apps environment
+#### Azure 容器应用环境
 
-Individual container apps are deployed to an Azure Container Apps environment. To create the environment, run the following command:
+各个容器应用将部署到 Azure 容器应用环境。若要创建环境，请运行以下命令：
 
 ```azurecli
 az containerapp env create \
@@ -76,6 +76,6 @@ az containerapp env create \
   --location "$LOCATION"
 ```
 
-> You may receive an error message telling that features are not allowed for this subscription. It means that the service Azure Container Apps is not available for the selected region.
+> 您可能会收到一条错误消息，告知此订阅不允许使用此功能。这意味着服务 Azure 容器应用不适用于所选区域。
 
-Once the environment is created, it is time to deploy applications.
+创建环境后，就可以部署应用程序了。

@@ -1,10 +1,10 @@
 ---
 sectionid: cleaning-resources
 sectionclass: h2
-title: Delete resources
+title: 删除资源
 parent-id: cleaning
 ---
 
-### Delete resources
+### 删除资源
 
-Now that the workshop is finished, it is important to delete unused resources to stop the billing. Open the [Azure portal](https://portal.azure.com) and delete the resource groups. All contained resources will be removed.
+现在研讨会已完成，删除未使用的资源以停止计费非常重要。打开 [Azure portal](https://portal.azure.com) 并删除资源组。所有包含的资源都将被删除。

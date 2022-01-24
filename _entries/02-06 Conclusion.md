@@ -1,14 +1,15 @@
 ---
 sectionid: lab1-conclusion
 sectionclass: h2
-title: Conclusion
+title: 结论
 parent-id: lab-1
 ---
 
-With this first lab you learned the main concepts of Azure container apps and its management.
+通过第一个实验，你了解了 Azure 容器应用及其管理的主要概念。
 
-In azure container apps, individual container apps are deployed to a single Container Apps environment, which acts as a secure boundary around groups of container apps. Container Apps in the same environment are deployed in the same virtual network and write logs to the same Log Analytics workspace.
-Azure Container Apps manages the details of Kubernetes and container orchestrations for you. Containers in Azure Container Apps can use any runtime, programming language, or development stack of your choice.
-The Azure Container Apps application lifecycle revolves around revisions. A revision being an immutable snapshot of a container app. When you deploy a container app, the first revision is automatically created. More revisions are created as containers change, or any adjustments are made to the configuration.
+在 Azure 容器应用中，各个容器应用部署到单个容器应用环境，该环境充当容器应用组周围的安全边界。同一环境中的容器应用部署在同一虚拟网络中，并将日志写入同一个 Log Analytics 工作区。
+Azure 容器应用为你管理 Kubernetes 和容器业务流程的详细信息。Azure 容器应用中的容器可以使用所选的任何运行时、编程语言或开发堆栈。
+Azure 容器应用应用程序生命周期围绕修订展开。修订版本是容器应用的不可变快照。部署容器应用时，将自动创建第一个修订版本。随着容器的更改或对配置进行任何调整，将创建更多修订版本。
 
-Let's move forward with a more complex scenario around the concepts revolving around Microservices Architecture.
+让我们围绕微服务体系结构的概念推进更复杂的方案。
+

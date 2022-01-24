@@ -1,11 +1,11 @@
 ---
 sectionid: intro
 sectionclass: h1
-title: Azure Containers Apps Workshop
+title: Azure 容器应用 研讨会
 type: nocount
 is-parent: yes
 ---
 
-Welcome to the **Azure Containers Apps workshop**. In this lab, you'll go through tasks that will help you master the basics and more advanced topics required to deploy applications to Azure Containers Apps.
+欢迎一起来参加 **Azure 容器应用 研讨会**. 在本实验中，你将完成一些任务，这些任务将帮助你掌握将应用程序部署到 Azure 容器应用所需的基础知识和更高级的主题。
 
-> The Azure Containers Apps is currently in public preview and several features/limitations may change between now and the general availability.
+>   Azure 容器应用目前为公共预览版，从现在到正式发布之间，一些功能/限制可能会发生变化。

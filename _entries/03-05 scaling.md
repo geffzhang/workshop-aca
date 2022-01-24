@@ -1,71 +1,71 @@
 ---
 sectionid: lab2-scaling
 sectionclass: h2
-title: Scalability
+title: 可伸缩性
 parent-id: lab-2
 ---
 
-### Scalability
+### 可伸缩性
 
-The scalability is an important part of the resiliency of an application. Your application should be able to handle an increase of the load with failing. In the cloud-native world, especially Kubernetes, scaling is done manually but can also be managed through autoscaling based on CPU/Memory usage by creation [Horizontal Pod Autoscaling (HPA)](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) objects.
+可伸缩性是应用程序复原能力的重要组成部分。您的应用程序应该能够处理失败的负载增加。在云原生世界中，尤其是 Kubernetes，伸缩是手动完成的，但也可以通过创建水平 Pod 自动缩放[Horizontal Pod Autoscaling (HPA)](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)对象，根据 CPU/内存使用情况进行自动缩放来管理。
 
-Azure Container Apps manages horizontal autoscaling through a set of declarative scaling rules to enrich the mechanism of HPA. By default, Azure Container Apps scale to zero and **pause billing when not in use**. As a Container App scales out, new instances of the Container App are created on-demand. Container Apps supports many scale triggers including HTTP and event-based triggers using Kubernetes Event-Driven Autoscaling (KEDA). KEDA is a rich autoscaler with many event scaler options continuously contributed by the community. For more information about supported scale triggers, see [KEDA Scalers](https://keda.sh/docs/scalers/).
+Azure 容器应用通过一组声明性缩放规则管理水平自动缩放，以丰富 HPA 机制。默认情况下，Azure 容器应用将缩放到零，并**在不使用时暂停计费**。当容器应用横向扩展时，将按需创建容器应用的新实例。容器应用支持许多缩放触发器，包括使用 Kubernetes 事件驱动的自动缩放 （KEDA） 的 HTTP 和基于事件的触发器。KEDA 是一个丰富的自动缩放器，具有许多由社区持续贡献的事件缩放器选项。有关支持的规模触发器的详细信息，请参 阅[KEDA Scalers](https://keda.sh/docs/scalers/)。
 
-The list of triggers to scale (in/out) a Container App are :
+用于缩放（传入/传出）容器应用的触发器列表包括 :
 
 - CPU
 - Memory
 - HTTP requests
-- Event-driver (any one supported by Keda)
+- Event-driver (Keda 支持的任何一个)
 
-#### Scale with Azure Container Apps
+#### 使用 Azure 容器应用进行缩放
 
-In Container Apps, scalability is managed through the revisions. Each revision contains scaliblity limits (min & max replicas) but can also contain rules to autoscale the application. To see the current number of replicas used by your Container App, open the Revision Management tab of the current active revision :
+在容器应用中，可伸缩性通过修订版本进行管理。每个修订版都包含可伸缩性限制（最小和最大副本），但也可以包含自动缩放应用程序的规则。要查看容器应用程序使用的当前副本数，请打开当前活动修订版的"修订管理"选项卡：
 
 ![Current scaling](/media/lab2/scale/current-scale.png)
 
-In our case, the UI app has a min limit equals to 0, a max limit of 10, and no autoscaling rules.
+在我们的例子中，UI 应用的最小限制等于 0，最大限制为 10，并且没有自动缩放规则。
 
-> During the preview, the max numbers of replicas per revision is 25 but the Azure Web Portal only allows to specify 10 at the moment. Use the CLI if you need more than 10 replicas.
+> 在预览期间，每个修订版的最大副本数为 25，但 Azure Web 门户目前只允许指定 10 个。如果需要 10 个以上的副本，请使用 CLI
 
 ![UI Default scaling](/media/lab2/scale/ui-default-scaling.png)
 
-Let's create a new revision with a new scaling rule. The revision should :
+让我们使用新的缩放规则创建一个新修订版本 :
 
-- have a suffix/name "autoscale"
-- have a minimum limit of 1 replica
-- have a maximum limit of 5 replicas
-- have an HTTP autoscaling rule where the maximum of concurrent requests is equal to 1 (we want one replica per user)
+- 有一个 后缀/名称 "autoscale"
+- 最小限制为一个副本
+- 最大限制为五个副本
+- 具有 HTTP 自动缩放规则，其中并发请求的最大值等于 1（我们希望每个用户一个副本）
 
 {% collapsible %}
 
-Open the UI Container App and the `Revision Management` tab. Click on `Create a new revision`. In the first page, specify a name suffix and click on the `Next` button.
+打开 UI 容器应用和选项卡 `Revision Management`。单击 `创建一个新的修订版本` 。在第一页中，指定名称后缀，然后单击`Next` 按钮。 
 
-In the scale part, configure the limits between 1 and 5 replicas.
+在缩放部分中，配置 1 到 5 个副本之间的限制。
 
 ![Define the limits](/media/lab2/scale/minmax.png)
 
-Then add a rule with `HTTP Scaling` type and one concurrent request.
+然后添加一个具有`HTTP Scaling` 类型和一个并发请求的规则。 
 
 ![Create a scaling rule](/media/lab2/scale/http-rule.png)
 
-Click on the `Create` button, a new revision should be created with 100% of ingress sent to it :
+单击该`Create`按钮，应创建一个新修订版，并将100%的入口发送到它：
 
 ![A new revision is created](/media/lab2/scale/ui-new-revision.png)
 
 {% endcollapsible %}
 
-Once done, your application should be ready to autoscale.
+完成后，应用程序应准备好自动缩放。
 
-#### Overload our container
+#### 超载我们的容器
 
-It's time to check that our container autoscales when users connect to it.
+现在是时候检查我们的容器在用户连接到它时是否会自动缩放了。
 
-##### Install a load testing tool
+##### 安装一个负载测试工具
 
-The simpler way to load test our platform is to use a small command-line tool to simulate a large number of requests. You are going to use [Vegeta](https://github.com/tsenart/vegeta) but you can replace it by any other load testing tool if you prefer.
+对我们的平台进行负载测试的更简单方法是使用小型命令行工具来模拟大量请求。你将使用工具 [Vegeta](https://github.com/tsenart/vegeta) ，但如果您愿意，可以用任何其他负载测试工具替换它。
 
-Start by installing the latest version of Vegeta
+首先安装最新版本的Vegeta
 
 {% collapsible %}
 
@@ -86,11 +86,11 @@ vegeta --version
 
 {% endcollapsible %}
 
-You need to create a file containing the endpoints to call. The endpoint is the exposed endpoint of the Reddog application which goes to the Traeffik app.
+您需要创建一个包含要调用的终结点的文件。端点是Reddog应用程序的公开端点，它转到Traeffik应用程序。
 
 {% collapsible %}
 
-Create a file named target.txt and copy the URL of your application.
+创建一个名为 target.txt 的文件，然后复制应用程序的 URL
 
 ``` txt
 GET https://url-public-endpoint-of-reddog-app
@@ -98,11 +98,11 @@ GET https://url-public-endpoint-of-reddog-app
 
 {% endcollapsible %}
 
-Then run Vegeta with the *attack* command. If no specific parameters are given, Vegeta will make 50 requests per second on the defined targets and will not stop until you stop it. You can also specify requests per sec and the duration with respective parameters rate and duration.
+然后使用命令*attack* 运行Vegeta。如果未给出特定参数，Vegeta 将在定义的目标上每秒发出 50 个请求，并且在您停止之前不会停止。您还可以使用相应的参数速率和持续时间指定每秒请求数和持续时间。  
 
 {% collapsible %}
 
-Run the following command line and let Vegeta generating requests.
+运行以下命令行，让 Vegeta 生成请求
 
 ``` bash
 vegeta attack -targets targets.txt -rate=20 and -duration=30s.
@@ -110,16 +110,16 @@ vegeta attack -targets targets.txt -rate=20 and -duration=30s.
 
 {% endcollapsible %}
 
-After few seconds, check that the number of replicas of the UI Container App has increased.
+几秒钟后，检查 UI 容器应用的副本数是否已增加。
 
 {% collapsible %}
 
-Open the `ui-autoscale` revision and in the Overview tab, check the number of current replicas
+打开 `ui-autoscale`修订版，然后在概览选项卡中，检查当前复制副本的数量。
 
 ![Post load testing](/media/lab2/scale/after-load-testing.png)
 
 {% endcollapsible %}
 
-We can confirm that autoscaling created one replica per request (with around 20 requests in parallel), but the scaling out never went above five replicas due to the max limit defined in the revision.
+我们可以确认自动缩放为每个请求创建了一个副本（并行创建大约 20 个请求），但由于修订版中定义的最大限制，横向扩展从未超过五个副本。
 
-Close Vegeta and any browser tab which displays the Reddog application, and within few minutes, you should be able to observe that UI container App scales down automatically to one replica because it is not overused anymore.
+关闭 Vegeta 和任何显示 Reddog 应用程序的浏览器选项卡，在几分钟内，您应该能够观察到 UI 容器 App 自动缩减到一个副本，因为它不再被过度使用。
